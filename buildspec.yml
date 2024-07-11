@@ -1,0 +1,24 @@
+version: 0.2
+
+env:
+  variables:
+    # Use the name of the Lambda Function for the .zip filename.
+    lambda: "bronze-to-silver"
+    script: "lambda_function.py"
+
+phases:
+  build:
+    commands:
+      - echo Creating $lambda.zip that contains $script ...
+      - zip $lambda.zip $script
+      - echo Created $lambda.zip
+
+  post_build:
+    commands:
+      - echo Moving $lambda.zip ...
+      - mkdir $CODEBUILD_RESOLVED_SOURCE_VERSION
+      - mv $lambda.zip $CODEBUILD_RESOLVED_SOURCE_VERSION
+
+artifacts:
+  files:
+    - $CODEBUILD_RESOLVED_SOURCE_VERSION/$lambda.zip
